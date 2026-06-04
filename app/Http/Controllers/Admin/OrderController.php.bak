@@ -1,0 +1,284 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\User;
+use App\Models\MenuItem;
+use App\Models\Table;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class OrderController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware(['auth', 'admin']);
+    }
+
+    public function index(Request $request)
+    {
+        $query = Order::with('user')->withSum('items', 'total_price')->latest();
+
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('order_type') && $request->order_type) {
+            $query->where('order_type', $request->order_type);
+        }
+
+        if ($request->has('date') && $request->date) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        if ($request->has('search') && $request->search) {
+            $query->where('order_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('customer_name', 'like', '%' . $request->search . '%');
+        }
+
+        $orders = $query->paginate(20);
+
+        $statusCounts = Order::select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        return view('admin.orders.index', compact('orders', 'statusCounts'));
+    }
+
+    public function today(Request $request)
+    {
+        $today = Carbon::today();
+
+        $todayOrders = Order::whereDate('created_at', $today)
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $pendingCount = Order::whereDate('created_at', $today)->where('status', 'pending')->count();
+        $preparingCount = Order::whereDate('created_at', $today)->where('status', 'preparing')->count();
+        $readyCount = Order::whereDate('created_at', $today)->where('status', 'ready')->count();
+        $completedCount = Order::whereDate('created_at', $today)->where('status', 'completed')->count();
+
+        $todayRevenue = Order::whereDate('created_at', $today)
+            ->where('status', 'completed')
+            ->sum('total');
+
+        return view('admin.orders.today', compact(
+            'todayOrders', 'pendingCount', 'preparingCount',
+            'readyCount', 'completedCount', 'todayRevenue'
+        ));
+    }
+
+    public function show(Order $order)
+    {
+        $order->load(['items.menuItem', 'user', 'promotion']);
+        return view('admin.orders.show', compact('order'));
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,preparing,ready,served,completed,cancelled'
+        ]);
+
+        $oldStatus = $order->status;
+        $newStatus = $request->status;
+
+        // Update order status
+        $order->update(['status' => $newStatus]);
+
+        // If order is completed, update payment status
+        if ($newStatus === 'completed' && $order->payment_status !== 'paid') {
+            $order->update(['payment_status' => 'paid']);
+        }
+
+        // If order is cancelled, restore stock
+        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            $this->restoreStock($order);
+        }
+
+        return back()->with('success', 'Order status updated successfully.');
+    }
+
+    public function cancel(Request $request, Order $order)
+    {
+        $request->validate([
+            'cancellation_reason' => 'nullable|string'
+        ]);
+
+        $order->update([
+            'status' => 'cancelled',
+            'cancellation_reason' => $request->cancellation_reason
+        ]);
+
+        // Restore stock
+        $this->restoreStock($order);
+
+        return back()->with('success', 'Order cancelled successfully.');
+    }
+
+    public function create()
+    {
+        $customers = User::where('role', 'customer')->get();
+        $menuItems = MenuItem::where('is_available', true)->get();
+        
+        // Get tables that are available at the current time
+        $now = now();
+        $tables = Table::where('status', 'available')
+            ->whereDoesntHave('reservations', function ($query) use ($now) {
+                $query->where('status', 'confirmed')
+                    ->where('reservation_date', $now->toDateString())
+                    ->where(function ($q) use ($now) {
+                        $q->whereTime('reservation_time', '<=', $now->toTimeString())
+                            ->orWhereTime('reservation_end_time', '>=', $now->toTimeString());
+                    });
+            })
+            ->get();
+        
+        return view('admin.orders.create', compact('customers', 'menuItems', 'tables'));
+    }
+
+    public function storeManual(Request $request)
+    {
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'customer_phone' => 'nullable|string',
+            'customer_email' => 'nullable|email',
+            'order_type' => 'required|in:dine_in,takeaway,delivery',
+            'table_number' => 'required_if:order_type,dine_in|nullable|exists:tables,id',
+            'items' => 'required|array|min:1',
+            'payment_method' => 'required|in:cash,card,online',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Create or find customer
+            $user = User::where('email', $request->customer_email)->first();
+            if (!$user) {
+                $user = User::create([
+                    'name' => $request->customer_name,
+                    'email' => $request->customer_email,
+                    'phone' => $request->customer_phone,
+                    'password' => bcrypt('password'),
+                    'role' => 'customer'
+                ]);
+            }
+
+            // Generate order number using timestamp for uniqueness
+            $prefix = 'ORD-' . date('Ymd') . '-';
+            $orderNumber = $prefix . date('His') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+            $subtotal = 0;
+            $orderItems = [];
+
+            $items = $request->items ?? [];
+            $quantities = $request->quantities ?? [];
+            
+            foreach ($items as $itemId) {
+                $menuItem = MenuItem::find($itemId);
+                $quantity = $quantities[$itemId] ?? 1;
+                $price = $menuItem->offer_price ?? $menuItem->price;
+                $itemTotal = $price * $quantity;
+                $subtotal += $itemTotal;
+
+                $orderItems[] = [
+                    'menu_item_id' => $menuItem->id,
+                    'item_name' => $menuItem->name,
+                    'quantity' => $quantity,
+                    'unit_price' => $price,
+                    'total_price' => $itemTotal,
+                    'size' => null,
+                    'special_instructions' => null,
+                ];
+            }
+
+            $taxRate = config('restaurant.order.tax_rate', 10);
+            $tax = $subtotal * ($taxRate / 100);
+            $deliveryCharge = $request->order_type === 'delivery' ? config('restaurant.order.delivery_charge', 50) : 0;
+            $total = $subtotal + $tax + $deliveryCharge;
+
+            $order = Order::create([
+                'order_number' => $orderNumber,
+                'user_id' => $user->id,
+                'order_type' => $request->order_type,
+                'table_id' => $request->table_number,
+                'table_number' => $request->table_number ? Table::find($request->table_number)->table_number : null,
+                'status' => 'confirmed',
+                'subtotal' => $subtotal,
+                'tax_amount' => $tax,
+                'delivery_charge' => $deliveryCharge,
+                'total' => $total,
+                'payment_method' => $request->payment_method,
+                'payment_status' => 'paid',
+                'customer_name' => $request->customer_name,
+                'customer_phone' => $request->customer_phone,
+                'customer_email' => $request->customer_email,
+                'delivery_address' => $request->delivery_address,
+                'special_instructions' => $request->special_instructions,
+            ]);
+
+            foreach ($orderItems as $orderItem) {
+                $order->items()->create($orderItem);
+            }
+
+            // Update table status if dine-in
+            if ($request->order_type === 'dine_in' && $request->table_number) {
+                Table::find($request->table_number)->update(['status' => 'occupied']);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.orders.show', $order)
+                ->with('success', 'Manual order created successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to create order: ' . $e->getMessage());
+        }
+    }
+
+    public function export($period)
+    {
+        switch ($period) {
+            case 'today':
+                $startDate = Carbon::today();
+                break;
+            case 'week':
+                $startDate = Carbon::now()->startOfWeek();
+                break;
+            case 'month':
+                $startDate = Carbon::now()->startOfMonth();
+                break;
+            default:
+                $startDate = Carbon::today();
+        }
+
+        $orders = Order::whereDate('created_at', '>=', $startDate)
+            ->with('user')
+            ->get();
+
+        $csv = "Order Number,Customer,Type,Status,Subtotal,Tax,Delivery,Total,Payment,Date\n";
+
+        foreach ($orders as $order) {
+            $csv .= "\"{$order->order_number}\",\"{$order->customer_name}\",{$order->order_type},{$order->status},{$order->subtotal},{$order->tax_amount},{$order->delivery_charge},{$order->total},{$order->payment_status},{$order->created_at}\n";
+        }
+
+        return response($csv, 200)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', "attachment; filename=\"orders-{$period}-export.csv\"");
+    }
+
+    private function restoreStock(Order $order)
+    {
+        foreach ($order->items as $item) {
+            // Stock restoration logic would go here
+            // This depends on your inventory tracking setup
+        }
+    }
+}

@@ -1,0 +1,95 @@
+{
+    "name": "PaSSSna Restaurant",
+    "short_name": "PaSSSna",
+    "description": "Premium dining experience with online ordering and reservations",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#DC2626",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/images/logo-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["food", "restaurant", "ordering"],
+    "screenshots": [
+        {
+            "src": "/screenshots/home.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "Home Page"
+        },
+        {
+            "src": "/screenshots/menu.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "Menu Page"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Order Food",
+            "short_name": "Order",
+            "description": "Order food for delivery or pickup",
+            "url": "/menu"
+        },
+        {
+            "name": "Book Table",
+            "short_name": "Reserve",
+            "description": "Make a reservation",
+            "url": "/reservation"
+        },
+        {
+            "name": "My Orders",
+            "short_name": "Orders",
+            "description": "View your orders",
+            "url": "/customer/orders"
+        }
+    ]
+}

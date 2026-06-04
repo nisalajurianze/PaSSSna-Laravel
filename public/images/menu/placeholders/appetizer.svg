@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#FCA5A5"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" rx="48" fill="url(#bg)"/>
+  <circle cx="140" cy="120" r="60" fill="#F59E0B" opacity="0.4"/>
+  <circle cx="680" cy="520" r="90" fill="#DC2626" opacity="0.25"/>
+  <text x="50%" y="52%" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="48" fill="#7C2D12" font-weight="700">Appetizer</text>
+  <text x="50%" y="60%" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="22" fill="#9A3412">PaSSSna Kitchen</text>
+</svg>

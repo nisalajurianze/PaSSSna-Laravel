@@ -1,0 +1,67 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+*.swo
+*.swp
+
+# Laravel specific
+bootstrap/cache/*
+storage/logs/*
+storage/framework/views/*
+storage/framework/cache/*
+storage/framework/sessions/*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing
+/coverage
+.phpunit.cache
+
+# Backup files
+*.back
+*.backup
+*.old
+*.tmp
+
+# Logs
+*.log
+laravel.log
+
+# Session files
+storage/framework/sessions/*
+
+# Environment files
+.env.local
+.env.*.local
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Deployment files
+_ide_helper.php
+*.meta
+*.phpstorm.meta.php

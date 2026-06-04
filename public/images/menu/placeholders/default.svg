@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E5E7EB"/>
+      <stop offset="1" stop-color="#F3F4F6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" rx="48" fill="url(#bg)"/>
+  <circle cx="140" cy="140" r="70" fill="#CBD5F5" opacity="0.35"/>
+  <circle cx="660" cy="460" r="100" fill="#E2E8F0" opacity="0.6"/>
+  <text x="50%" y="52%" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="48" fill="#334155" font-weight="700">PaSSSna</text>
+  <text x="50%" y="60%" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="22" fill="#64748B">Signature Menu</text>
+</svg>

