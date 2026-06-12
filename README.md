@@ -1,59 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo.png" width="280" alt="PaSSSna Logo">
 </p>
 
-## About Laravel
+# 🍽️ PaSSSna Restaurant Management System
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+![PaSSSna Restaurant Banner](public/images/passsna_banner.png)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+PaSSSna is a premium, fully-featured **Restaurant Management System** built on top of the Laravel framework. It provides a comprehensive solution for restaurant owners to manage menus, track orders, handle reservations, monitor inventory, manage staff, and generate PDF reports. It also offers a seamless and responsive customer interface for online ordering and dining reservations.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📸 Application Showcase
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🏠 Customer Landing Page
+*A premium, modern, and responsive interface for customers to browse the menu and book tables.*
+![Customer Landing Page](public/images/screenshots/landing_page.png)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🔑 Authentication Page
+*Clean, interactive sign-in and account registration screens.*
+![Login Page](public/images/screenshots/login_page.png)
 
-## Laravel Sponsors
+### 📊 Admin Dashboard
+*Comprehensive control center with real-time KPI metrics, charts, live orders, reservations, and inventory management.*
+![Admin Dashboard](public/images/screenshots/admin_dashboard.png)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🌟 Key Features
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 💻 Customer Panel
+*   **Authentication & Profiles:** Secure registration, login, and profile management.
+*   **Interactive Menu:** Browse dishes with smart search, sorting, and category filters.
+*   **Shopping Cart:** Easy-to-use checkout system supporting multiple payment methods.
+*   **Order Tracking:** Live status tracking for delivery, takeaway, or dine-in orders.
+*   **Table Booking:** Real-time table reservations with automated seat allocation.
+*   **Meal Builder:** Custom meal builder interface for personalized dining options.
 
-## Contributing
+### 🛡️ Admin Dashboard
+*   **Analytics & KPIs:** Interactive sales, orders, and reservation charts.
+*   **Menu Management:** Full CRUD operations for menu items, categories, and tags.
+*   **Order Operations:** Manage and update status of deliveries, takeaways, and dine-in orders.
+*   **Reservation Control:** View, accept, decline, or reschedule table bookings.
+*   **Inventory & Stock:** Kitchen ingredient/stock level tracking with low-stock alerts.
+*   **Staff Management:** Manage employee roles, attendance, and details.
+*   **Promotions Engine:** Create and manage discount codes, active offers, and banners.
+*   **PDF Reports:** Export sales, orders, and inventory reports directly to PDF.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⚙️ Tech Stack & Architecture
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+*   **Backend:** Laravel 10 / PHP 8.1+
+*   **Frontend:** Tailwind CSS, Blade Templates, JavaScript
+*   **Build Tool:** Vite
+*   **Database:** MySQL 8.0+
+*   **PDF Generation:** DomPDF
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 Quick Setup Guide
 
-## License
+### 1. Prerequisites
+Ensure you have the following installed:
+*   PHP 8.1 or higher
+*   Composer
+*   MySQL 8.0+
+*   Node.js (v18+) & npm
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2. Installation
+Follow these commands to get your local server running:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/PaSSSna-Restaurant.git
+cd PaSSSna-Restaurant
+
+# Install PHP dependencies
+composer install
+
+# Install Frontend dependencies
+npm install
+
+# Setup Environment config
+copy .env.example .env
+
+# Generate Application Key
+php artisan key:generate
+```
+
+### 3. Database Configuration
+Open your `.env` file and configure your local database credentials:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=passsna_restaurant
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password
+```
+
+Create the database in MySQL:
+```sql
+CREATE DATABASE passsna_restaurant;
+```
+
+Run migrations and seed default data:
+```bash
+php artisan migrate --seed
+```
+
+### 4. Run the Application
+Link the storage folder:
+```bash
+php artisan storage:link
+```
+
+Start the servers:
+```bash
+# Terminal 1 - Laravel server
+php artisan serve
+
+# Terminal 2 - Frontend compiler
+npm run dev
+```
+
+Visit the application at `http://127.0.0.1:8000`.
+
+---
+
+## 🔑 Default Admin Credentials
+
+For testing and administrative access, use the following credentials:
+
+*   **Email:** `admin.passsna@gmail.com`
+*   **Password:** `PaSSSna_log`
+
+---
+
+## 🗄️ Database Schema Overview
+
+The database contains the following key tables:
+*   `users` — Core user accounts (Customers and Admins)
+*   `menu_items` — Restaurant dishes, prices, and photo links
+*   `orders` & `order_items` — Cart orders and breakdown
+*   `tables` & `reservations` — Seat layouts and booking logs
+*   `inventory` — Kitchen ingredients and stock levels
+*   `staff` — Employee schedules and credentials
+*   `promotions` — Discount codes and campaigns
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
