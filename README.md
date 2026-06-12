@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="public/images/logo.png" width="280" alt="PaSSSna Logo">
-</p>
-
 # 🍽️ PaSSSna Restaurant Management System
 
 ![PaSSSna Restaurant Banner](public/images/passsna_banner.png)
